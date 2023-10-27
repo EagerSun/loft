@@ -1,2 +1,1 @@
-# loft
- fresh package for training &amp; validating &amp; evaling under data-parrallel distribution.
+A fresh package for training & validating & evaling under data-parrallel distribution. This package is avaliable for both torch and paddle deep-learning frameworks.
