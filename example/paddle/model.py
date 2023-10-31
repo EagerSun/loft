@@ -4,7 +4,7 @@ import paddle.nn as nn
 from paddle.distributed.fleet.utils import recompute as checkpoint
 from collections import OrderedDict
 
-from lofter import BaseModel
+from loft import BaseModel
 
 class LayerNorm(nn.LayerNorm):
     def forward(self, x: paddle.Tensor):

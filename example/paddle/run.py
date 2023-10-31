@@ -2,10 +2,10 @@ import paddle
 from paddle.distributed.fleet.utils.hybrid_parallel_util import fused_allreduce_gradients
 import numpy as np
 
-from lofter import Lofter
-from lofter.utils import BaseRunner
-from lofter.utils import Logger
-from lofter.data import DataReader
+from loft import Lofter
+from loft.utils import BaseRunner
+from loft.utils import Logger
+from loft.data import DataReader
 
 from model import Model, logit_scale_clip
 from utils import Optimizer, LR_Scheduler

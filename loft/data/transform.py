@@ -73,6 +73,26 @@ def Image_to_base64(value: object):
     except:
         raise ValueError("The input value is failed to transform: Image_to_base64!")
 
+def bytes_to_urlbase64(value: bytes):
+    try: return base64.urlsafe_b64encode(value).decode('ascii')
+    except: raise ValueError("The input value is failed to transform: bytes_to_urlbase64!")
+
+def urlbase64_to_Image(value: str):
+    try: return Image.open(BytesIO(base64.urlsafe_b64decode(value))).convert('RGB')
+    except: raise ValueError("The input value is failed to transform: urlbase64_to_Image!")
+
+def urlbase64_to_bytes(value: str):
+    try: return base64.urlsafe_b64decode(value)
+    except: raise ValueError("The input value is failed to transform: urlbase64_to_bytes!")
+
+def Image_to_urlbase64(value: object):
+    try:
+        _buffer = BytesIO()
+        value.convert('RGB').save(_buffer, "JPEG")
+        return base64.urlsafe_b64encode(_buffer.getvalue()).decode('ascii')
+    except:
+        raise ValueError("The input value is failed to transform: Image_to_urlbase64!")
+
 def Image_to_bytes(value: object):
     try:
         _buffer = BytesIO()
@@ -98,6 +118,10 @@ _d_transform = {
     "base64_to_Image": base64_to_Image,
     "base64_to_bytes": base64_to_bytes,
     "Image_to_base64": Image_to_base64,
+    "bytes_to_urlbase64": bytes_to_urlbase64,
+    "urlbase64_to_Image": urlbase64_to_Image,
+    "urlbase64_to_bytes": urlbase64_to_bytes,
+    "Image_to_urlbase64": Image_to_urlbase64,
     "Image_to_bytes": Image_to_bytes,
     "DROP": "DROP",
 }

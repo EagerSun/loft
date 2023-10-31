@@ -6,7 +6,7 @@ import six
 import collections
 from functools import partial
 
-from lofter import BaseMethod, get_framework
+from loft import BaseMethod, get_framework
 
 from sklearn.metrics import roc_curve
 from sklearn.metrics import auc

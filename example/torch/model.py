@@ -4,7 +4,7 @@ import torch.nn as nn
 from torch.utils.checkpoint import checkpoint as checkpoint
 from collections import OrderedDict
 
-from lofter import BaseModel
+from loft import BaseModel
 
 class LayerNorm(nn.LayerNorm):
     def forward(self, x: torch.Tensor):

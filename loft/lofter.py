@@ -29,9 +29,16 @@ class Lofter(object):
                 _tmp.register_value(_key, _value)
             setattr(self, name, _tmp)
         elif isinstance(value, (type(None), int, float, str, list, tuple, types.MethodType, types.FunctionType)):
-            setattr(self, name, value)
-            if default_as is not None:
-                setattr(self.default, default_as, value)
+            if value == "DEFAULT":
+                try:
+                    _default_value = getattr(self.default, name)
+                except:
+                    raise ValueError(f"attr {name} is not exist in loft.{self.__class__.__name__}!")
+                setattr(self, name, _default_value)
+            else:
+                setattr(self, name, value)
+                if default_as is not None:
+                    setattr(self.default, default_as, value)
         else:
             _tmp = Lofter()
             _tmp.default = self.default
