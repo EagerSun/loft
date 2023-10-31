@@ -1,0 +1,4 @@
+betas1: 0.9
+betas2: 0.98
+eps: 1.0e-08
+weight_decay: 0.02

@@ -63,7 +63,11 @@ class BaseRunner(BaseMethod):
  
     def model_distribute(self, model: object = None):
         assert model is not None
-        return DistributedDataParallel(model)
+        if self.framework == "torch":
+            local_rank, _, _ = self.get_rank()
+            return DistributedDataParallel(model, device_ids=[local_rank])
+        else:
+            return DistributedDataParallel(model)
 
     def get_rank(self, ):
         if self.gpu_per_node is None:

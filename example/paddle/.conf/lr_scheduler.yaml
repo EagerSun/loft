@@ -1,0 +1,7 @@
+total_steps: 100000
+warmup_steps: 2000
+start_lr: 0.0
+max_lr: 1.0e-05
+final_lr: 0.0
+exp_T1: 9.5e-05
+_lr_scheduler: linear

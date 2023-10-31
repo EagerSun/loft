@@ -1,0 +1,138 @@
+batch_size: 256
+num_workers: 6
+dataset:
+  address:
+    data_0:
+      address: /root/paddlejob/workspace/env_run/yinglong_ROOT_syg/data_merge4base/wukong_cut_1000w/part-{00000..04999}
+      columns:
+        key: 1
+        image: 2
+        txt: 3
+      transforms:
+        key: original
+        image: base64_to_Image
+        txt: original
+      format: txt
+      seq_char: "\t"
+      max_split: -1
+      writer:
+        activate: false
+        address: ../yinglong/data_merge4base/wukong_transform
+        format: tar
+        seq_char: "\t"
+        columns:
+          key: 0
+          image: 1
+          txt: 2
+        transforms:
+          key: string_to_bytes
+          image: base64_to_bytes
+          txt: string_to_bytes
+        idx_mark: true
+        use_original_name: false
+    data_1:
+      address: /root/paddlejob/workspace/env_run/yinglong_ROOT_syg/data_merge4base/4e_tusou_data_combine/part-{00000..09999}
+      columns:
+        key: 0
+        image: 1
+        txt: 3
+      transforms:
+        key: original
+        image: base64_to_Image
+        txt: original
+      format: txt
+      seq_char: "\t"
+      max_split: -1
+      writer:
+        activate: false
+        address: ../yinglong/data_merge4base/wukong_transform
+        format: tar
+        seq_char: "\t"
+        columns:
+          key: 0
+          image: 1
+          txt: 2
+        transforms:
+          key: string_to_bytes
+          image: base64_to_bytes
+          txt: string_to_bytes
+        idx_mark: true
+        use_original_name: false
+  shuffle:
+    frequency: 4
+    quota: 5000
+validate_batch_size: 256
+validate_num_workers: 6
+validate_dataset:
+  address:
+    data_0:
+      address: /root/paddlejob/workspace/env_run/yinglong_ROOT_syg/data_processing/data_inference/16700_image_image_cs
+      columns:
+        key: 3
+        image_q: 0
+        image_r: 1
+        label: 2
+        key_r: 4 
+      transforms:
+        key: original
+        image_q: base64_to_Image
+        image_r: base64_to_Image
+        label: string_to_float
+        key_r: original
+      format: txt
+      seq_char: "\t"
+      max_split: -1
+      writer:
+        activate: true
+        address: ../clip
+        format: tar
+        seq_char: "\t"
+        columns:
+          key: 0
+          key_r: 1
+          image_q: 2
+          image_r: 3
+          label: 4
+        transforms:
+          key: string_to_bytes
+          key_r: string_to_bytes
+          image_q: base64_to_bytes
+          image_r: base64_to_bytes
+          label: string_to_bytes
+        idx_mark: true
+        use_original_name: true
+    data_1:
+      address: /root/paddlejob/workspace/env_run/yinglong_ROOT_syg/data_processing/data_inference/16700_image_text_cutted_cs
+      columns:
+        key: 3
+        image_q: 0
+        txt: 1
+        label: 2
+      transforms:
+        key: original
+        image_q: base64_to_Image
+        txt: original
+        label: string_to_float
+      format: txt
+      seq_char: "\t"
+      max_split: -1
+      writer:
+        activate: false
+        address: ../clip
+        format: tar
+        seq_char: "\t"
+        columns:
+          key: 0
+          image_q: 1
+          txt: 2
+          label: 3
+        transforms:
+          key: string_to_bytes
+          image_q: base64_to_bytes
+          txt: string_to_bytes
+          label: string_to_bytes
+        idx_mark: true
+        use_original_name: true
+  shuffle:
+    frequency: 3
+    quota: 0

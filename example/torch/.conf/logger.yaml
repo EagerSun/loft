@@ -1,0 +1,30 @@
+log_addr: .log
+checkpoint_addr: .checkpoint
+task_name: tmp
+load_addr:
+  model: null
+  optimizer:
+    key0: null
+    key1: null
+    key2: null
+  step: null
+validate_frequency: 100
+save_frequency: 100
+eval_frequency: 10000
+eval_writer:
+  activate: false
+  address: ../yinglong/data_merge4base/wukong_transform
+  format: tar
+  seq_char: "\t"
+  columns:
+    key: 0
+    image: 1
+    txt: 2
+  transforms:
+    key: original
+    image: base64_to_bytes
+    txt: original
+  idx_mark: false
+  use_original_name: true
+metrics_frequency: 1
+dist_frequency: 100
