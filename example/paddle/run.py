@@ -163,7 +163,7 @@ class Runner(BaseRunner):
                     "key": data["key"],
                     "score": _s, 
                 }
-            self.writer.eval_record(_d_data)
+            self.logger.eval_record(_d_data)
         
         self.datareader.step()
         self.logger.step()
