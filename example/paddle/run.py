@@ -2,9 +2,7 @@ import paddle
 from paddle.distributed.fleet.utils.hybrid_parallel_util import fused_allreduce_gradients
 import numpy as np
 
-from loft import Lofter
-from loft.utils import BaseRunner
-from loft.utils import Logger
+from loft import Lofter, Logger, BaseRunner
 from loft.data import DataReader
 
 from model import Model, logit_scale_clip
@@ -47,14 +45,14 @@ class Runner(BaseRunner):
 
     def train(self, ):
         self.dist_setup()
-        local_rank, global_rank, world_size = self.get_rank()
-        self.datareader.set_global_rank(global_rank)
-        self.datareader.set_world_size(world_size)
-        self.logger.set_global_rank(global_rank)
-        self.logger.set_world_size(world_size)
+        self.initial_rank()
+        self.datareader.set_global_rank(self.global_rank)
+        self.datareader.set_world_size(self.world_size)
+        self.logger.set_global_rank(self.global_rank)
+        self.logger.set_world_size(self.world_size)
         self.logger.new(ranks = [0, 1])
-        self.model.set_world_size(world_size)
-        self.model.set_global_rank(global_rank)
+        self.model.set_world_size(self.world_size)
+        self.model.set_global_rank(self.global_rank)
         self.model = self.model_distribute(self.model)
         scaler = paddle.amp.GradScaler(init_loss_scaling=65536)
         optimizer = self.optimizer(self.model.parameters(), "AdamW")
@@ -144,14 +142,14 @@ class Runner(BaseRunner):
     def eval(self, ):
         self.dist_setup()
         if self.use_cudnn: cudnn.benchmark = True
-        local_rank, global_rank, world_size = self.get_rank()
+        self.initial_rank()
 
-        self.datareader.set_global_rank(global_rank)
-        self.datareader.set_world_size(world_size)
-        self.logger.set_global_rank(global_rank)
-        self.logger.set_world_size(world_size)
+        self.datareader.set_global_rank(self.global_rank)
+        self.datareader.set_world_size(self.world_size)
+        self.logger.set_global_rank(self.global_rank)
+        self.logger.set_world_size(self.world_size)
 
-        self.model.set_world_size(world_size)
+        self.model.set_world_size(self.world_size)
         self.model = self.model_distribute(self.model)
         self.model.eval()
         for data in self.datareader.dataloader:

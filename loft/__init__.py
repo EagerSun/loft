@@ -10,4 +10,6 @@ def get_framework():
 def get_numgpu_per_node():
     return int(os.environ.get("CGPU_COUNT", "8"))
 
-from .lofter import Lofter, BaseMethod, BaseModel
+from .lofter import Lofter
+from .utils import BaseMethod, BaseModel
+from .utils import BaseRunner, Logger
