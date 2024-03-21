@@ -1,0 +1,4 @@
+#distribute_url: tcp://127.0.0.1:35645
+distribute_url: env://
+use_cudnn: true
+use_amp: true

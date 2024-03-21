@@ -1,0 +1,26 @@
+visual:
+  input_size: 224
+  patch_size: 14
+  input_channel: 3
+  embed_dim: 256
+  transformer:
+    layer: 12
+    recompute: true
+    block:
+      width: 768
+      head: 12
+      dropout_rate: 0.0
+text:
+  vocab_size: 50000
+  context_length: 30
+  transformer:
+    layer: 12
+    recompute: true
+    block:
+      width: 768
+      head: 12
+      dropout_rate: 0.0
+  sentence_field: 4
+  embed_dim: 256
+  dropout_rate: 0.01
+logit_scale: 0.07
