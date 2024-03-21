@@ -41,6 +41,7 @@ class BaseRunner(BaseMethod):
         self.global_rank = None
         self.local_rank = None
         self.world_size = None
+        self.node_num = None
         return
     
     def set_framework(self, ):
@@ -51,8 +52,8 @@ class BaseRunner(BaseMethod):
         if self.framework == "torch":
             if self.distribute_url is None:
                 raise ValueError(f"{self.__class__.__name__}'s attribute self.distribute_url should be set with valid value but None!")
-            _, global_rank, world_size = self.get_rank()
-            init_parallel(backend="nccl", init_method=self.distribute_url, rank=global_rank, world_size=world_size)
+            self.initial_rank()
+            init_parallel(backend="nccl", init_method=self.distribute_url, rank=self.global_rank, world_size=self.world_size)
         else:
             init_parallel()
         return
@@ -64,12 +65,12 @@ class BaseRunner(BaseMethod):
     def model_distribute(self, model: object = None):
         assert model is not None
         if self.framework == "torch":
-            local_rank, _, _ = self.get_rank()
-            return DistributedDataParallel(model, device_ids=[local_rank])
+            self.initial_rank()
+            return DistributedDataParallel(model, device_ids=[self.local_rank])
         else:
             return DistributedDataParallel(model)
 
-    def get_rank(self, ):
+    def initial_rank(self, ):
         if self.gpu_per_node is None:
             self.gpu_per_node = get_numgpu_per_node()
         
@@ -82,9 +83,10 @@ class BaseRunner(BaseMethod):
                 self.global_rank = dist.get_rank()
                 self.world_size = dist.get_world_size()
                 self.local_rank = self.global_rank % self.gpu_per_node
+            self.node_num = self.world_size // self.gpu_per_node
         else:
             pass
-        return self.local_rank, self.global_rank, self.world_size
+        return
     
     def to_cuda(self, item: dict = None):
         assert item is not None
