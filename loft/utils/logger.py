@@ -8,6 +8,7 @@ if get_framework() == "torch":
     from torch import Tensor as TENSOR
     from torch.utils.tensorboard import SummaryWriter as Writer
 else:
+    import paddle
     from paddle import save as SAVE
     from paddle import load as LOAD
     from paddle import Tensor as TENSOR
@@ -18,10 +19,13 @@ from ..data import DataWriter
 
 def _load(model: object = None, address: str = None):
     assert model is not None and address is not None
-    _model_pred = LOAD(address)
     if get_framework() == "torch":
+        _model_pred = LOAD(address, map_location='cpu')
         model.load_state_dict(_model_pred)
     else:
+        _model_pred = LOAD(address, return_numpy=True)
+        for _key, _value in _model_pred.items():
+            _model_pred[_key] = paddle.to_tensor(_model_pred[_key], place=paddle.CPUPlace()) 
         model.set_state_dict(_model_pred)
     del _model_pred
     return
@@ -110,13 +114,16 @@ class Logger(BaseMethod):
         if self._step % self.save_frequency != 0 and not ignore_save_frequency: return
 
         if model is not None:
-            SAVE(model.state_dict(), os.path.join(self._model_path, "model_{}".format(self._step)))
+            _model_dict = {_k: _v.cpu() for _k, _v in model.state_dict().items()}
+            SAVE(_model_dict, os.path.join(self._model_path, "model_{}".format(self._step)))
         if optimizer is not None:
             if type(optimizer) == dict:
                 for _key, _value in optimizer.items():
-                    SAVE(optimizer.state_dict(), os.path.join(self._model_path, "optimizer_{}_{}".format(_key, self._step)))
+                    _optimizer_dict = {_k: _v.cpu() for _k, _v in _value.state_dict().items()}
+                    SAVE(_optimizer_dict, os.path.join(self._model_path, "optimizer_{}_{}".format(_key, self._step)))
             else:
-                SAVE(optimizer.state_dict(), os.path.join(self._model_path, "optimizer_{}".format(self._step)))
+                _optimizer_dict = {_k: _v.cpu() for _k, _v in optimizer.state_dict().items()}
+                SAVE(_optimizer_dict, os.path.join(self._model_path, "optimizer_{}".format(self._step)))
         SAVE({"step": self._step}, os.path.join(self._model_path, "step_{}".format(self._step)))
 
     def load(self, model: object = None, optimizer: object = None, lr_scheduler: object = None):
